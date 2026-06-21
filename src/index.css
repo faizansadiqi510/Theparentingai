@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-navy: #0B1C2E;
+  --color-brand-teal: #2D6A6A;
+  --color-brand-gold: #C5A059;
+  --color-brand-coral: #F08C7F;
+  --color-brand-cream: #FDFBF7;
+  --color-brand-light-teal: #D4F0EC;
+  
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Smooth scrolling and base typography overrides */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FDFBF7;
+  color: #0B1C2E;
+  font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Customized Accordion Transition Class if needed */
+.accordion-content {
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+}
+

@@ -1,0 +1,6 @@
+{
+  "name": "TheParentingAI",
+  "description": "Practical guidance for raising smart, safe, and future-ready kids in the age of AI. Dedicated resources for Indian families.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
