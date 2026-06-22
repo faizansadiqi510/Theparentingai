@@ -41,7 +41,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
         { text: 'Securing database socket connection...', delay: 300 },
         { text: 'Verifying details & checking anti-spam integrity...', delay: 700 },
         { text: 'Writing waitlist record to secure Google cloud ledger...', delay: 1100 },
-        { text: 'Building instant download preview vaults...', delay: 1500 }
+        { text: 'Confirming pre-launch waitlist placement...', delay: 1500 }
       ];
 
       sequence.forEach((item) => {
@@ -49,6 +49,34 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
           setProgressText(item.text);
         }, item.delay);
       });
+
+      // Check if direct Google Sheets Apps Script integration is set up
+      const directSheetsUrl = (import.meta as any).env?.VITE_DIRECT_SHEETS_URL || 'https://script.google.com/macros/s/AKfycbwKb-Tc3EuoCTp6CRpplzeqvrrZ47sxdD-p1Y_d5HM-RMNdyfBxqW0zTW8xiN6P14hJPA/exec';
+      let directSyncSuccessful = false;
+
+      if (directSheetsUrl) {
+        try {
+          console.log('Direct Sheets sync enabled. Sending payload to:', directSheetsUrl);
+          // Send as POST with no-cors mode to prevent CORS redirect blocks
+          await fetch(directSheetsUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              parentName: form.parentName.trim(),
+              email: form.email.trim(),
+              phone: form.phone.trim(),
+              createdAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+            })
+          });
+          directSyncSuccessful = true;
+          console.log('Successfully posted waitlist registration to Direct Sheets URL.');
+        } catch (postErr) {
+          console.warn('Direct Sheets post failed, falling back to backup storage:', postErr);
+        }
+      }
 
       // Write waitlist entry to firestore or local backup on delay/error
       const entryId = 'waitlist_' + Math.floor(Math.random() * 900000 + 100000);
@@ -58,7 +86,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
         parentName: form.parentName.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
-        syncedToSheets: false,
+        syncedToSheets: directSyncSuccessful,
         createdAt: serverTimestamp(),
       };
 
@@ -79,7 +107,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
           parentName: form.parentName.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
-          syncedToSheets: false,
+          syncedToSheets: directSyncSuccessful,
           createdAt: new Date().toISOString(),
           isOfflineBackup: true
         });
@@ -140,7 +168,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                 </span>
                 <h4 className="text-sm font-semibold text-brand-navy font-sans mb-0.5">3-Book Parenting AI Bundle</h4>
                 <p className="text-[10px] text-brand-navy/60 font-sans leading-tight">
-                  Join today & get <strong>instant access to free chapters</strong> + standard launch priority.
+                  Join today to guarantee the best priority spot + standard launch priority.
                 </p>
               </div>
               <div className="text-right shrink-0">
@@ -215,7 +243,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5 text-brand-navy shrink-0" />
-                <span>Instant PDF previews unlocked immediately on submission.</span>
+                <span>Standard priority spot reserved on launch day.</span>
               </div>
             </div>
 
@@ -304,55 +332,13 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                 </div>
               </div>
 
-              {/* Direct Simulated PDF Preview Downloads */}
-              <div className="space-y-3">
-                <h4 className="text-xs font-bold font-sans text-brand-navy tracking-wider uppercase flex items-center gap-1.5">
-                  <Library className="w-4 h-4 text-brand-navy" />
-                  Your Instant Preview Library
-                </h4>
-
-                <div className="space-y-2">
-                  <div className="bg-white border border-brand-slate/15 rounded-lg p-3 flex items-center justify-between shadow-xxs">
-                    <div className="font-sans">
-                      <span className="text-[9px] font-bold text-brand-navy/40 uppercase block">Main Guide Preview</span>
-                      <span className="text-xs font-bold text-brand-navy">The Parenting AI (Ch. 1-2).pdf</span>
-                    </div>
-                    <a
-                      id="download-main-guide-link"
-                      href={`data:text/plain;charset=utf-8,${encodeURIComponent('This is your free preview chapter for The Parenting AI bundle.')}`}
-                      download="TheParentingAI_Preview_Chapters.pdf"
-                      className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-bold font-sans cursor-pointer shadow-xs border border-brand-gold/15"
-                    >
-                      <Download className="w-3.5 h-3.5 text-brand-navy" />
-                      <span>Download</span>
-                    </a>
-                  </div>
-
-                  <div className="bg-white border border-brand-slate/15 rounded-lg p-3 flex items-center justify-between shadow-xxs">
-                    <div className="font-sans">
-                      <span className="text-[9px] font-bold text-brand-gold uppercase block">Free Bonus #1 Preview</span>
-                      <span className="text-xs font-bold text-brand-navy">The AI-Safe Home (Excerpts).pdf</span>
-                    </div>
-                    <a
-                      id="download-bonus1-link"
-                      href={`data:text/plain;charset=utf-8,${encodeURIComponent('This is the free excerpt of your Parental Controls guide.')}`}
-                      download="The_AI_Safe_Home_Excerpts.pdf"
-                      className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-bold font-sans cursor-pointer shadow-xs border border-brand-gold/15"
-                    >
-                      <Download className="w-3.5 h-3.5 text-brand-navy" />
-                      <span>Download</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
               {/* Action Close */}
               <button
                 id="close-success-dialog-btn"
                 onClick={onClose}
                 className="w-full bg-brand-navy hover:bg-[#132c54] text-white font-sans font-semibold text-xs py-2.5 rounded-lg text-center transition-colors cursor-pointer"
               >
-                Close Reward Panel & Continue
+                Close & Return to Home Screen
               </button>
             </div>
           </div>

@@ -22,7 +22,6 @@ import { BookDetail } from './types';
 import BookMockup from './components/BookMockup';
 import CheckoutModal from './components/CheckoutModal';
 import ChaptersModal from './components/ChaptersModal';
-import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   // Modal states
@@ -33,14 +32,11 @@ export default function App() {
   // FAQ accordion state
   const [expandedFaq, setExpandedFaq] = useState<string | null>('faq-1');
 
-  // Waitlist admin panel state
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
-
   // Customer conversion details
   const [hasCompletedPurchase, setHasCompletedPurchase] = useState(false);
   const [buyerEmail, setBuyerEmail] = useState('');
   const [notification, setNotification] = useState<string | null>(
-    '✨ Pre-launch waitlist is active! Join free today and download instant preview PDF drafts.'
+    '✨ Pre-launch waitlist is active! Join free today to secure your priority spot.'
   );
 
   const handleOpenCheckout = () => {
@@ -66,14 +62,7 @@ export default function App() {
   const handlePurchaseSuccess = (email: string) => {
     setBuyerEmail(email);
     setHasCompletedPurchase(true);
-    setNotification('🎉 Waitlist entry secured! Download your bonus preview PDFs below.');
-    // Scroll down to the delivery panel smoothly
-    setTimeout(() => {
-      const receiptSection = document.getElementById('delivery-vault-dashboard');
-      if (receiptSection) {
-        receiptSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 500);
+    setNotification('🎉 Waitlist entry secured! We will notify you when the bundle launches.');
   };
 
   return (
@@ -136,60 +125,11 @@ export default function App() {
               <span>JOIN FREE LAUNCH WAITLIST →</span>
             </button>
             <p className="text-[11px] text-brand-navy/55 font-sans">
-              Get instant free chapters • Secure Priority Group A placement for the upcoming launch.
+              Secure Priority Group A placement for the upcoming launch.
             </p>
           </div>
         </div>
       </section>
-
-      {/* DELIVERY VAULT CONTROLLER (ONLY Visible instantly after waitlist signup to fulfill complete functionality) */}
-      {hasCompletedPurchase && (
-        <section id="delivery-vault-dashboard" className="bg-white border-y-2 border-brand-gold px-5 py-8">
-          <div className="max-w-lg mx-auto space-y-5">
-            <div className="text-center space-y-2">
-              <span className="bg-brand-gold text-brand-navy font-mono text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                WAITLIST CONFIRMED & REVIEWS UNLOCKED
-              </span>
-              <h3 className="font-display text-xl font-bold text-brand-navy">Your Priority Waitlist Spot is Secured</h3>
-              <p className="text-xs text-brand-navy/70">
-                A copy of early chapters has been routed to <strong>{buyerEmail}</strong>. You can download early preview chapters directly below:
-              </p>
-            </div>
-
-            <div className="space-y-2.5">
-              {BOOKS.map((book) => (
-                <div key={book.id} className="bg-white rounded-xl p-3.5 border border-brand-gold/20 flex items-center justify-between shadow-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-14 bg-gradient-to-br from-brand-gold to-brand-navy rounded-xs flex items-center justify-center text-white shrink-0 shadow-xxs">
-                      <Cpu className="w-5 h-5 text-brand-navy" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-brand-navy">{book.title}</h4>
-                      <p className="text-[10px] text-brand-navy/60 font-sans italic">{book.isBonus ? 'Bonus Companion File' : 'Official Primary Guide'}</p>
-                    </div>
-                  </div>
-                  <a
-                    id={`active-direct-download-${book.id}`}
-                    href={`data:text/plain;charset=utf-8,${encodeURIComponent(`Simulated Content for: ${book.title}. Detailed parenting chapters compiled for learning.`)}`}
-                    download={`${book.title.replace(/\s+/g, '_')}_SecureAccess.pdf`}
-                    className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                  >
-                    <Download className="w-3.5 h-3.5 text-brand-navy" />
-                    <span>PDF</span>
-                  </a>
-                </div>
-              ))}
-            </div>
-
-            <div className="p-4 bg-brand-cream border border-brand-teal/10 rounded-xl space-y-2 text-xs">
-              <span className="font-bold text-brand-teal block">💡 Quick Parenting Tip:</span>
-              <p className="text-brand-navy/80">
-                Start with <strong>The Parenting AI (Main Guide), Chapter 2</strong>. It outlines a beautiful conversational safeguard to talk to your kids about cyber trust, which builds immediate alignment before setting up tech locks from the Safe Home guide.
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* SECTION 2: THE PAIN POINT */}
       <section className="bg-brand-navy text-white px-5 py-12 md:py-20">
@@ -376,10 +316,10 @@ export default function App() {
               onClick={handleScrollToPricing}
               className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-brand-gold/30"
             >
-              <span>GET INSTANT ACCESS →</span>
+              <span>JOIN FREE LAUNCH WAITLIST →</span>
             </button>
             <p className="text-center text-[11px] text-brand-navy/55 font-sans">
-              Instant download • Read on phone, tablet, or laptop. No subscription required.
+              Secure Priority Group A placement for the upcoming launch in June 2026.
             </p>
           </div>
         </div>
@@ -392,7 +332,7 @@ export default function App() {
           {/* Trust badges row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { label: 'Instant Download', detail: 'Received as safe PDFs in 60 seconds' },
+              { label: 'Standard Priority Spot', detail: 'Reserved successfully for free' },
               { label: 'Written for Indian Families', detail: 'Cultural context, setup & board references' },
               { label: 'No Jargon, No Coding', detail: 'Perfect even for absolute non-tech parents' }
             ].map((badge, idx) => (
@@ -544,7 +484,7 @@ export default function App() {
               <span>YES, SIGN ME UP FOR THE WAITLIST →</span>
             </button>
             <p className="text-center text-[11px] text-white/60 font-sans">
-              Join for Rs. 0. Instant previews. Alerts when the final bundle launches in June 2026.
+              Join for Rs. 0. Secure Priority Group A. Alerts when the final bundle launches in June 2026.
             </p>
           </div>
         </div>
@@ -625,13 +565,6 @@ export default function App() {
                 <Instagram className="w-4 h-4 text-brand-teal" />
                 <span>@theparenting.ai</span>
               </a>
-              <button 
-                onClick={() => setIsAdminOpen(true)}
-                className="flex items-center gap-1.5 hover:underline text-brand-gold font-bold bg-transparent border-0 p-0 cursor-pointer"
-              >
-                <Lock className="w-3.5 h-3.5 text-brand-gold" />
-                <span>Admin Waitlist Sync</span>
-              </button>
             </div>
           </div>
         </div>
@@ -642,11 +575,6 @@ export default function App() {
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         onSuccess={handlePurchaseSuccess}
-      />
-
-      <AdminDashboard 
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
       />
 
       {isChaptersOpen && selectedBookForPreview && (
