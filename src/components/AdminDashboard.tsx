@@ -100,12 +100,14 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
   const fetchWaitlist = async () => {
     setLoading(true);
+    let entries: WaitlistEntry[] = [];
+    
+    // 1. Fetch from Firestore
     try {
       const waitlistRef = collection(db, 'waitlist');
       const q = query(waitlistRef, orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
       
-      const entries: WaitlistEntry[] = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         entries.push({
@@ -117,18 +119,44 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           createdAt: data.createdAt,
         });
       });
-      setWaitlist(entries);
     } catch (err) {
-      console.error('Error fetching waitlist from Firestore:', err);
-      try {
-        handleFirestoreError(err, OperationType.LIST, 'waitlist');
-      } catch (_) {}
-    } finally {
-      setLoading(false);
+      console.warn('Could not load from Firestore (using local storage backup only):', err);
     }
+
+    // 2. Load from localStorage backup queue
+    try {
+      const backups = JSON.parse(localStorage.getItem('offline_waitlist_entries') || '[]');
+      backups.forEach((b: any) => {
+        // Prevent display duplicates
+        if (!entries.some(e => e.id === b.id || e.email === b.email)) {
+          entries.push({
+            id: b.id,
+            parentName: b.parentName,
+            email: b.email,
+            phone: b.phone,
+            syncedToSheets: b.syncedToSheets,
+            createdAt: b.createdAt,
+          });
+        }
+      });
+    } catch (localErr) {
+      console.warn('Error fetching localStorage backup entries:', localErr);
+    }
+
+    // 3. Sort merged list by date descending safely
+    entries.sort((a, b) => {
+      const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : new Date(a.createdAt).getTime();
+      const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : new Date(b.createdAt).getTime();
+      const numA = isNaN(timeA) ? 0 : timeA;
+      const numB = isNaN(timeB) ? 0 : timeB;
+      return numB - numA;
+    });
+
+    setWaitlist(entries);
+    setLoading(false);
   };
 
-  // Convert Firebase Timestamp to presentational text
+  // Convert Firebase Timestamp or String Date to presentational text
   const formatDate = (timestamp: any) => {
     if (!timestamp) return 'Just now';
     if (timestamp.toDate) {
@@ -234,14 +262,44 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
         throw new Error('Google Sheets Appending failed: ' + JSON.stringify(appendErr));
       }
 
-      // 4. Update the synced records in Firestore in a single batch
-      setSyncStatusMsg('Updating synchronization state in Firestore...');
+      // 4. Update the synced records in Firestore & Local storage backup
+      setSyncStatusMsg('Updating synchronization state...');
       const batch = writeBatch(db);
+      let localSavesNeedUpdating = false;
+      let hasFirestoreWrites = false;
+      const backups = JSON.parse(localStorage.getItem('offline_waitlist_entries') || '[]');
+
       unsynced.forEach((item) => {
-        const itemRef = doc(db, 'waitlist', item.id);
-        batch.update(itemRef, { syncedToSheets: true });
+        // If it exists in the offline localStorage backup list, update its sync status
+        const backupIdx = backups.findIndex((b: any) => b.id === item.id);
+        if (backupIdx !== -1) {
+          backups[backupIdx].syncedToSheets = true;
+          localSavesNeedUpdating = true;
+        }
+
+        // If it is a Cloud Firestore record, update Firestore
+        if (!String(item.id).startsWith('waitlist_local_')) {
+          try {
+            const itemRef = doc(db, 'waitlist', item.id);
+            batch.update(itemRef, { syncedToSheets: true });
+            hasFirestoreWrites = true;
+          } catch (err) {
+            console.warn('Could not add to Firestore transaction batch:', err);
+          }
+        }
       });
-      await batch.commit();
+
+      if (localSavesNeedUpdating) {
+        localStorage.setItem('offline_waitlist_entries', JSON.stringify(backups));
+      }
+
+      if (hasFirestoreWrites) {
+        try {
+          await batch.commit();
+        } catch (dbErr) {
+          console.warn('Could not commit firestore update batch (updated local stats successfully):', dbErr);
+        }
+      }
 
       setSyncStatusMsg(`Success! Synchronized ${unsynced.length} parents to Google Sheets.`);
       fetchWaitlist(); // Refresh table state

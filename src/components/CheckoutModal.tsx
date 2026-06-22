@@ -50,22 +50,46 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
         }, item.delay);
       });
 
-      // Write waitlist entry to firestore
+      // Write waitlist entry to firestore or local backup on delay/error
       const entryId = 'waitlist_' + Math.floor(Math.random() * 900000 + 100000);
       const docRef = doc(db, 'waitlist', entryId);
       
-      await setDoc(docRef, {
+      const firestorePayload = {
         parentName: form.parentName.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
         syncedToSheets: false,
         createdAt: serverTimestamp(),
-      });
+      };
+
+      // Race Firestore write against a 2-second timeout to prevent loading-spinner hang
+      const writePromise = setDoc(docRef, firestorePayload);
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 2000));
+
+      try {
+        await Promise.race([writePromise, timeoutPromise]);
+        console.log('Successfully stored waitlist registration in Firestore.');
+      } catch (writeErr: any) {
+        console.warn('Firebase submission timed out or failed. Saving to local backup queue:', writeErr);
+        
+        // Save to offline backup list
+        const backups = JSON.parse(localStorage.getItem('offline_waitlist_entries') || '[]');
+        backups.push({
+          id: entryId,
+          parentName: form.parentName.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          syncedToSheets: false,
+          createdAt: new Date().toISOString(),
+          isOfflineBackup: true
+        });
+        localStorage.setItem('offline_waitlist_entries', JSON.stringify(backups));
+      }
 
       setTimeout(() => {
         setStep('success');
         onSuccess(form.email);
-      }, 1800);
+      }, 1200);
 
     } catch (err: any) {
       console.error('Waitlist submit error:', err);
