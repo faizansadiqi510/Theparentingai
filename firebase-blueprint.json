@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "WaitlistEntry": {
+      "title": "WaitlistEntry",
+      "description": "Details of parents who signed up for the waitlist.",
+      "type": "object",
+      "properties": {
+        "parentName": {
+          "type": "string",
+          "description": "The custom full name of the parent."
+        },
+        "email": {
+          "type": "string",
+          "description": "The contact email address."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The WhatsApp / Mobile number of the parent."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the parent joined the waitlist."
+        },
+        "syncedToSheets": {
+          "type": "boolean",
+          "description": "Tracks whether the record has been synced to Google Sheets."
+        }
+      },
+      "required": [
+        "parentName",
+        "email",
+        "phone",
+        "createdAt",
+        "syncedToSheets"
+      ]
+    }
+  },
+  "firestore": {
+    "/waitlist/{entryId}": {
+      "schema": "WaitlistEntry",
+      "description": "Contains list of waitlist entries submitted by parents"
+    }
+  }
+}

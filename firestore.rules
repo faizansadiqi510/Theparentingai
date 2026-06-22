@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Catch-all default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+             request.auth.token.email == "faizansadiqi501@gmail.com" &&
+             request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidWaitlistEntry(entry) {
+      return entry.parentName is string && entry.parentName.size() > 0 && entry.parentName.size() <= 200 &&
+             entry.email is string && entry.email.size() > 3 && entry.email.size() <= 200 &&
+             entry.phone is string && entry.phone.size() >= 8 && entry.phone.size() <= 30 &&
+             entry.syncedToSheets is bool &&
+             entry.createdAt == request.time;
+    }
+
+    match /waitlist/{entryId} {
+      allow create: if isValidId(entryId) && isValidWaitlistEntry(request.resource.data);
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin() &&
+                    request.resource.data.parentName == resource.data.parentName &&
+                    request.resource.data.email == resource.data.email &&
+                    request.resource.data.phone == resource.data.phone &&
+                    request.resource.data.createdAt == resource.data.createdAt &&
+                    request.resource.data.syncedToSheets is bool;
+    }
+  }
+}

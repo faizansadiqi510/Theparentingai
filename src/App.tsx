@@ -22,6 +22,7 @@ import { BookDetail } from './types';
 import BookMockup from './components/BookMockup';
 import CheckoutModal from './components/CheckoutModal';
 import ChaptersModal from './components/ChaptersModal';
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   // Modal states
@@ -32,11 +33,14 @@ export default function App() {
   // FAQ accordion state
   const [expandedFaq, setExpandedFaq] = useState<string | null>('faq-1');
 
+  // Waitlist admin panel state
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+
   // Customer conversion details
   const [hasCompletedPurchase, setHasCompletedPurchase] = useState(false);
   const [buyerEmail, setBuyerEmail] = useState('');
   const [notification, setNotification] = useState<string | null>(
-    '🔥 Special Launch Price of Rs. 299 ending soon for Indian parents.'
+    '✨ Pre-launch waitlist is active! Join free today and download instant preview PDF drafts.'
   );
 
   const handleOpenCheckout = () => {
@@ -62,7 +66,7 @@ export default function App() {
   const handlePurchaseSuccess = (email: string) => {
     setBuyerEmail(email);
     setHasCompletedPurchase(true);
-    setNotification('🎉 Lifetime access unlocked! Check your simulated download dashboard below.');
+    setNotification('🎉 Waitlist entry secured! Download your bonus preview PDFs below.');
     // Scroll down to the delivery panel smoothly
     setTimeout(() => {
       const receiptSection = document.getElementById('delivery-vault-dashboard');
@@ -126,29 +130,29 @@ export default function App() {
           <div className="space-y-3 pt-2">
             <button
               id="cta-hero-download"
-              onClick={handleScrollToPricing}
+              onClick={handleOpenCheckout}
               className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all transform flex items-center justify-center gap-2 cursor-pointer border border-brand-gold/30"
             >
-              <span>DOWNLOAD NOW FOR Rs. 299 →</span>
+              <span>JOIN FREE LAUNCH WAITLIST →</span>
             </button>
             <p className="text-[11px] text-brand-navy/55 font-sans">
-              Instant download • Read on phone, tablet, or laptop. No subscription required.
+              Get instant free chapters • Secure Priority Group A placement for the upcoming launch.
             </p>
           </div>
         </div>
       </section>
 
-      {/* DELIVERY VAULT CONTROLLER (ONLY Visible instantly after purchase simulation to fulfill complete functionality) */}
+      {/* DELIVERY VAULT CONTROLLER (ONLY Visible instantly after waitlist signup to fulfill complete functionality) */}
       {hasCompletedPurchase && (
         <section id="delivery-vault-dashboard" className="bg-white border-y-2 border-brand-gold px-5 py-8">
           <div className="max-w-lg mx-auto space-y-5">
             <div className="text-center space-y-2">
               <span className="bg-brand-gold text-brand-navy font-mono text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                UNLOCKED ACCESS VAULT
+                WAITLIST CONFIRMED & REVIEWS UNLOCKED
               </span>
-              <h3 className="font-display text-xl font-bold text-brand-navy">Your parenting resources are ready</h3>
+              <h3 className="font-display text-xl font-bold text-brand-navy">Your Priority Waitlist Spot is Secured</h3>
               <p className="text-xs text-brand-navy/70">
-                A copy of these PDFs has been routed to <strong>{buyerEmail}</strong>. You can also download them directly below:
+                A copy of early chapters has been routed to <strong>{buyerEmail}</strong>. You can download early preview chapters directly below:
               </p>
             </div>
 
@@ -518,12 +522,12 @@ export default function App() {
                 
                 <div className="flex justify-between items-center bg-[#18396c]/60 p-4 rounded-xl border border-white/20">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-white block">TODAY'S SPECIAL DISPATCH</span>
-                    <span className="text-lg font-bold text-white/90">Complete Bundle Price</span>
+                    <span className="text-[10px] uppercase font-bold text-white block">TODAY'S PRE-LAUNCH FOCUS</span>
+                    <span className="text-lg font-bold text-white/90">Waitlist Joining Fee</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-black text-white select-all">Rs. 299</span>
-                    <p className="text-[9px] text-white/60 font-mono italic">one-time payment</p>
+                    <span className="text-2xl font-black text-brand-gold select-all">FREE</span>
+                    <p className="text-[9px] text-white/60 font-mono italic">pre-launch benefit</p>
                   </div>
                 </div>
               </div>
@@ -537,10 +541,10 @@ export default function App() {
               onClick={handleOpenCheckout}
               className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 py-4.5 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2 border border-brand-gold/30"
             >
-              <span>YES, I WANT THE BUNDLE →</span>
+              <span>YES, SIGN ME UP FOR THE WAITLIST →</span>
             </button>
             <p className="text-center text-[11px] text-white/60 font-sans">
-              Instant digital download. Read on any phone, tablet, smartphone, or laptop.
+              Join for Rs. 0. Instant previews. Alerts when the final bundle launches in June 2026.
             </p>
           </div>
         </div>
@@ -607,7 +611,7 @@ export default function App() {
             onClick={handleOpenCheckout}
             className="inline-flex w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg transition-all shadow-md hover:shadow-lg cursor-pointer items-center justify-center gap-2 border border-brand-gold/30"
           >
-            <span>DOWNLOAD BUNDLE NOW FOR Rs. 299</span>
+            <span>JOIN THE EXCLUSIVE WAITLIST FOR FREE</span>
           </button>
 
           <div className="pt-6 space-y-2 border-t border-white/10 text-[11px] text-brand-cream/60 font-sans">
@@ -621,6 +625,13 @@ export default function App() {
                 <Instagram className="w-4 h-4 text-brand-teal" />
                 <span>@theparenting.ai</span>
               </a>
+              <button 
+                onClick={() => setIsAdminOpen(true)}
+                className="flex items-center gap-1.5 hover:underline text-brand-gold font-bold bg-transparent border-0 p-0 cursor-pointer"
+              >
+                <Lock className="w-3.5 h-3.5 text-brand-gold" />
+                <span>Admin Waitlist Sync</span>
+              </button>
             </div>
           </div>
         </div>
@@ -631,6 +642,11 @@ export default function App() {
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         onSuccess={handlePurchaseSuccess}
+      />
+
+      <AdminDashboard 
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
       />
 
       {isChaptersOpen && selectedBookForPreview && (
