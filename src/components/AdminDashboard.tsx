@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, FileSpreadsheet, RefreshCw, LogOut, ExternalLink, 
-  Lock, CheckCircle2, AlertCircle, Database, Check, ShieldAlert
+  Lock, CheckCircle2, AlertCircle, Database, Check, ShieldAlert,
+  Download, Key
 } from 'lucide-react';
 import { 
   auth, initAuth, googleSignIn, logout, getAccessToken, db,
@@ -37,6 +38,10 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
     localStorage.getItem('theparentingai_spreadsheet_id')
   );
 
+  // Fallback Passcode States
+  const [passcodeInput, setPasscodeInput] = useState('');
+  const [passcodeError, setPasscodeError] = useState('');
+
   useEffect(() => {
     // Listen to Auth State
     const unsubscribe = initAuth((user, token) => {
@@ -53,13 +58,64 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           setAdminEmail(user.email || '');
         }
       } else {
-        setIsAdminUser(false);
-        setAdminEmail('');
-        setGoogleToken(null);
+        // Only reset if we didn't use the passcode bypass
+        if (!adminEmail.includes('(Bypassed)')) {
+          setIsAdminUser(false);
+          setAdminEmail('');
+          setGoogleToken(null);
+        }
       }
     });
     return () => unsubscribe();
   }, [isOpen]);
+
+  const handlePasscodeBypass = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasscodeError('');
+    const cleanPass = passcodeInput.trim().toLowerCase();
+    
+    if (cleanPass === 'faizanadmin' || cleanPass === 'faizan') {
+      setIsAdminUser(true);
+      setAdminEmail('faizansadiqi501@gmail.com (Bypassed)');
+      setSyncStatusMsg('By-passed redirect checks successfully. Offline roster operational.');
+      setPasscodeInput('');
+      setTimeout(() => {
+        fetchWaitlist();
+      }, 50);
+    } else {
+      setPasscodeError('Invalid passcode. Please check and try again.');
+    }
+  };
+
+  const downloadCSV = () => {
+    if (waitlist.length === 0) {
+      alert('No entries to export.');
+      return;
+    }
+    
+    // Create headers
+    const headers = ['Parent Name', 'Email Address', 'WhatsApp / Phone', 'Sync ID', 'Sync Status', 'Registration Date'];
+    
+    // Create rows
+    const rows = waitlist.map(item => [
+      `"${(item.parentName || '').replace(/"/g, '""')}"`,
+      `"${(item.email || '').replace(/"/g, '""')}"`,
+      `"${(item.phone || '').replace(/"/g, '""')}"`,
+      `"${item.id}"`,
+      item.syncedToSheets ? 'Synced' : 'Pending',
+      `"${formatDate(item.createdAt).replace(/"/g, '""')}"`
+    ]);
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `parents_waitlist_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleAdminLogin = async () => {
     setLoading(true);
@@ -360,7 +416,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
               </div>
             )}
 
-            <div className="pt-2">
+            <div className="pt-2 space-y-4">
               <button 
                 id="admin-google-signin-btn"
                 onClick={handleAdminLogin}
@@ -384,6 +440,45 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   </span>
                 </div>
               </button>
+
+              <div className="relative py-2 flex items-center justify-center">
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-b border-brand-slate/15"></div>
+                <span className="relative bg-[#faf7f2] px-3 text-[9px] text-brand-navy/55 font-mono font-bold uppercase tracking-wider">OR BYPASS</span>
+              </div>
+
+              {/* Passcode Bypass login box */}
+              <form onSubmit={handlePasscodeBypass} className="bg-white p-4 rounded-xl border border-brand-slate/15 shadow-2xs space-y-3 text-left">
+                <div className="flex items-center gap-1.5 text-brand-teal">
+                  <Key className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider font-display">Fast Passcode Unlock</span>
+                </div>
+                <p className="text-[10px] text-brand-navy/60 leading-normal">
+                  If Google redirects are blocked by missing server domains, enter your bypass passcode to view waitlist contacts instantly:
+                </p>
+                <div className="space-y-1.5">
+                  <input
+                    id="admin-bypass-passcode-input"
+                    type="password"
+                    placeholder="Enter bypass passcode (e.g. faizanadmin)"
+                    value={passcodeInput}
+                    onChange={(e) => {
+                      setPasscodeError('');
+                      setPasscodeInput(e.target.value);
+                    }}
+                    className="w-full bg-brand-cream/40 border border-brand-slate/15 rounded-lg px-3 py-2 text-xs text-brand-navy focus:outline-hidden focus:border-brand-teal transition-colors font-mono"
+                  />
+                  {passcodeError && (
+                    <p className="text-[10px] text-brand-coral font-semibold">{passcodeError}</p>
+                  )}
+                </div>
+                <button
+                  id="admin-bypass-submit-btn"
+                  type="submit"
+                  className="w-full bg-brand-navy hover:bg-brand-navy/90 text-white font-bold text-xs py-2 rounded-lg transition-colors cursor-pointer"
+                >
+                  Verify Code & Fetch Waitlist
+                </button>
+              </form>
             </div>
           </div>
         ) : (
@@ -504,9 +599,21 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
             {/* WAITLIST ROSTER TABLE */}
             <div className="space-y-2.5">
-              <h5 className="text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider">
-                Live Registration Journal ({waitlist.length} entries)
-              </h5>
+              <div className="flex items-center justify-between">
+                <h5 className="text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider">
+                  Live Registration Journal ({waitlist.length} entries)
+                </h5>
+                {waitlist.length > 0 && (
+                  <button
+                    id="admin-csv-export-btn"
+                    onClick={downloadCSV}
+                    className="text-[10px] bg-brand-navy hover:bg-brand-navy/90 text-brand-gold font-bold px-2 py-1 flex items-center gap-1 rounded-sm cursor-pointer transition-all border border-white/10"
+                  >
+                    <Download className="w-3 h-3 text-brand-gold" />
+                    <span>Download CSV</span>
+                  </button>
+                )}
+              </div>
 
               <div className="border border-brand-slate/15 rounded-xl overflow-hidden bg-white shadow-xxs">
                 <div className="max-h-[350px] overflow-y-auto">
