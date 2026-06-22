@@ -79,7 +79,7 @@ export default function App() {
             onClick={handleScrollToPricing}
             className="bg-brand-gold text-brand-navy hover:bg-[#C9A95F] font-sans font-extrabold text-[10px] px-3.5 py-1.5 rounded-md transition-all shadow-sm cursor-pointer border border-brand-gold/20"
           >
-            ORDER BUNDLE
+            JOIN WAITLIST
           </button>
         </div>
       </header>
