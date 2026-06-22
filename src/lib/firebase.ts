@@ -64,21 +64,10 @@ let cachedAccessToken: string | null = null;
 let isSigningIn = false;
 
 export const initAuth = (
-  onAuthSuccess?: (user: User, token: string) => void,
-  onAuthFailure?: () => void
+  onAuthChange: (user: User | null, token: string | null) => void
 ) => {
-  return onAuthStateChanged(auth, async (user: User | null) => {
-    if (user) {
-      if (cachedAccessToken) {
-        if (onAuthSuccess) onAuthSuccess(user, cachedAccessToken);
-      } else if (!isSigningIn) {
-        cachedAccessToken = null;
-        if (onAuthFailure) onAuthFailure();
-      }
-    } else {
-      cachedAccessToken = null;
-      if (onAuthFailure) onAuthFailure();
-    }
+  return onAuthStateChanged(auth, (user) => {
+    onAuthChange(user, cachedAccessToken);
   });
 };
 

@@ -29,6 +29,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [adminEmail, setAdminEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleToken, setGoogleToken] = useState<string | null>(null);
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([]);
   const [syncing, setSyncing] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState('');
@@ -38,8 +39,11 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
 
   useEffect(() => {
     // Listen to Auth State
-    const unsubscribe = initAuth(
-      (user) => {
+    const unsubscribe = initAuth((user, token) => {
+      if (user) {
+        if (token) {
+          setGoogleToken(token);
+        }
         if (user.email === 'faizansadiqi501@gmail.com') {
           setIsAdminUser(true);
           setAdminEmail(user.email || '');
@@ -48,23 +52,25 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
           setIsAdminUser(false);
           setAdminEmail(user.email || '');
         }
-      },
-      () => {
+      } else {
         setIsAdminUser(false);
         setAdminEmail('');
+        setGoogleToken(null);
       }
-    );
+    });
     return () => unsubscribe();
   }, [isOpen]);
 
   const handleAdminLogin = async () => {
     setLoading(true);
+    setSyncStatusMsg('');
     try {
       const res = await googleSignIn();
       if (res?.user) {
         if (res.user.email === 'faizansadiqi501@gmail.com') {
           setIsAdminUser(true);
           setAdminEmail(res.user.email);
+          setGoogleToken(res.accessToken);
           fetchWaitlist();
         } else {
           setIsAdminUser(false);
@@ -83,6 +89,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
     try {
       await logout();
       setIsAdminUser(false);
+      setGoogleToken(null);
       setWaitlist([]);
     } catch (err) {
       console.error('Logout failed:', err);
@@ -353,6 +360,21 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   </p>
                 </div>
               </div>
+
+              {!googleToken && (
+                <div className="bg-white/5 border border-white/10 rounded-lg p-3 space-y-2 text-[11px] font-sans">
+                  <p className="text-brand-gold font-semibold leading-relaxed">
+                    ⚠️ Google Sheets authorization needed to sync. Click below to connect Sheets permissions.
+                  </p>
+                  <button
+                    id="admin-auth-google-sheets-btn"
+                    onClick={handleAdminLogin}
+                    className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-extrabold text-[10px] px-2.5 py-1 rounded transition-all cursor-pointer inline-flex items-center gap-1"
+                  >
+                    <span>Authorize Google Sheets</span>
+                  </button>
+                </div>
+              )}
 
               {spreadsheetId && (
                 <div className="p-3 bg-white/5 rounded-lg border border-white/10 space-y-2">
