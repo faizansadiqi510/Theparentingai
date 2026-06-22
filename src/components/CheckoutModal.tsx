@@ -249,10 +249,10 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
             <button
               id="checkout-confirm-payment-btn"
               type="submit"
-              className="w-full bg-brand-teal hover:bg-[#238c80] text-white font-sans font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-brand-teal/10"
+              className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md border border-brand-gold/20"
             >
               <span>Verify & Simulate Indian Gateway</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 text-brand-navy" />
             </button>
           </form>
         )}
@@ -304,10 +304,10 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
 
             {/* Official Looking Receipt */}
             <div className="p-6 space-y-5 bg-gradient-to-b from-brand-light-teal/20 to-brand-cream/10">
-              <div className="bg-white rounded-xl border border-brand-teal/20 p-4 space-y-3 shadow-xs">
-                <div className="flex justify-between items-center pb-2 border-b border-brand-teal/10">
-                  <span className="text-[10px] text-brand-navy/50 font-mono">ORDER ID: {form.orderId}</span>
-                  <span className="text-[10px] text-brand-teal font-bold font-mono">STATUS: PAID</span>
+              <div className="bg-white rounded-xl border border-brand-slate/20 p-4 space-y-3 shadow-xs">
+                <div className="flex justify-between items-center pb-2 border-b border-brand-slate/15">
+                  <span className="text-[10px] text-brand-navy/60 font-mono">ORDER ID: {form.orderId}</span>
+                  <span className="text-[10px] text-brand-navy font-bold font-mono">STATUS: PAID</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-y-2.5 text-xs font-sans">
@@ -325,7 +325,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                   </div>
                   <div>
                     <span className="text-brand-navy/50 block text-[10px] uppercase font-semibold">Paid Amount</span>
-                    <span className="text-brand-teal font-bold">Rs. 299 (Nett)</span>
+                    <span className="text-brand-navy font-bold">Rs. 299 (Nett)</span>
                   </div>
                 </div>
               </div>
@@ -333,12 +333,12 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               {/* Direct Simulated PDF Downloads */}
               <div className="space-y-3">
                 <h4 className="text-xs font-bold font-sans text-brand-navy tracking-wider uppercase flex items-center gap-1.5">
-                  <Library className="w-4 h-4 text-brand-teal" />
+                  <Library className="w-4 h-4 text-brand-navy" />
                   Your Download Library
                 </h4>
 
                 <div className="space-y-2">
-                  <div className="bg-white border border-brand-teal/10 rounded-lg p-3 flex items-center justify-between shadow-xxs">
+                  <div className="bg-white border border-brand-slate/15 rounded-lg p-3 flex items-center justify-between shadow-xxs">
                     <div className="font-sans">
                       <span className="text-[9px] font-bold text-brand-navy/40 uppercase block">Main Guide</span>
                       <span className="text-xs font-bold text-brand-navy">The Parenting AI.pdf</span>
@@ -347,14 +347,14 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       id="download-main-guide-link"
                       href={`data:text/plain;charset=utf-8,${encodeURIComponent('Simulated PDF Download Code: The Parenting AI - Guide for Indian Families.')}`}
                       download="TheParentingAI_Main_Guide.pdf"
-                      className="bg-brand-teal hover:bg-[#238c80] text-white p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-semibold font-sans cursor-pointer"
+                      className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-semibold font-sans cursor-pointer"
                     >
-                      <Download className="w-3.5 h-3.5" />
+                      <Download className="w-3.5 h-3.5 text-brand-navy" />
                       <span>Download</span>
                     </a>
                   </div>
 
-                  <div className="bg-white border border-brand-teal/10 rounded-lg p-3 flex items-center justify-between shadow-xxs">
+                  <div className="bg-white border border-brand-slate/15 rounded-lg p-3 flex items-center justify-between shadow-xxs">
                     <div className="font-sans">
                       <span className="text-[9px] font-bold text-brand-gold uppercase block">Free Bonus #1</span>
                       <span className="text-xs font-bold text-brand-navy">The AI-Safe Home.pdf</span>
@@ -363,14 +363,14 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       id="download-bonus1-link"
                       href={`data:text/plain;charset=utf-8,${encodeURIComponent('Simulated PDF Download Code: The AI-Safe Home - Device config router locks.')}`}
                       download="The_AI_Safe_Home_Bonus_Guide_1.pdf"
-                      className="bg-brand-teal hover:bg-[#238c80] text-white p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-semibold font-sans cursor-pointer"
+                      className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-semibold font-sans cursor-pointer"
                     >
-                      <Download className="w-3.5 h-3.5" />
+                      <Download className="w-3.5 h-3.5 text-brand-navy" />
                       <span>Download</span>
                     </a>
                   </div>
 
-                  <div className="bg-white border border-brand-teal/10 rounded-lg p-3 flex items-center justify-between shadow-xxs">
+                  <div className="bg-white border border-brand-slate/15 rounded-lg p-3 flex items-center justify-between shadow-xxs">
                     <div className="font-sans">
                       <span className="text-[9px] font-bold text-brand-gold uppercase block">Free Bonus #2</span>
                       <span className="text-xs font-bold text-brand-navy">The 1 Percent Parent.pdf</span>
@@ -379,9 +379,9 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                       id="download-bonus2-link"
                       href={`data:text/plain;charset=utf-8,${encodeURIComponent('Simulated PDF Download Code: The 1% Parent - 21 Habits of Elite families.')}`}
                       download="The_1_Percent_Parent_Bonus_Guide_2.pdf"
-                      className="bg-brand-teal hover:bg-[#238c80] text-white p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-semibold font-sans cursor-pointer"
+                      className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy p-2 rounded-lg transition-colors flex items-center gap-1 text-[11px] font-semibold font-sans cursor-pointer"
                     >
-                      <Download className="w-3.5 h-3.5" />
+                      <Download className="w-3.5 h-3.5 text-brand-navy" />
                       <span>Download</span>
                     </a>
                   </div>

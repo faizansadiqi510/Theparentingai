@@ -15,10 +15,10 @@ export default function ChaptersModal({ isOpen, onClose, chapters, bookTitle }: 
     <div className="fixed inset-0 z-50 overflow-y-auto bg-brand-navy/80 backdrop-blur-xs flex items-center justify-center p-4">
       <div 
         id="chapters-dialog-box"
-        className="bg-brand-cream rounded-2xl shadow-xl max-w-lg w-full overflow-hidden border border-brand-teal/20"
+        className="bg-brand-cream rounded-2xl shadow-xl max-w-lg w-full overflow-hidden border border-brand-slate/20"
       >
         {/* Header */}
-        <div className="p-5 bg-brand-teal text-white flex items-center justify-between">
+        <div className="p-5 bg-brand-navy text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-brand-gold animate-pulse" />
             <div>
@@ -50,9 +50,9 @@ export default function ChaptersModal({ isOpen, onClose, chapters, bookTitle }: 
             {chapters?.map((chapter, i) => (
               <div 
                 key={i} 
-                className="bg-white p-4.5 rounded-xl border border-brand-teal/10 shadow-xxs space-y-3"
+                className="bg-white p-4.5 rounded-xl border border-brand-slate/15 shadow-xxs space-y-3"
               >
-                <h4 className="font-display text-sm font-bold text-brand-teal">
+                <h4 className="font-display text-sm font-bold text-brand-navy">
                   {chapter.title}
                 </h4>
                 <ul className="space-y-2 text-xs font-sans text-brand-navy/85">
@@ -68,12 +68,12 @@ export default function ChaptersModal({ isOpen, onClose, chapters, bookTitle }: 
           </div>
 
           {/* Practical Dialogue script example */}
-          <div className="p-4 bg-brand-light-teal/35 rounded-xl border border-brand-teal/15 space-y-2.5">
-            <span className="text-[9px] uppercase tracking-wider font-bold text-brand-teal flex items-center gap-1.5 font-sans">
+          <div className="p-4 bg-brand-light-teal/50 rounded-xl border border-brand-slate/15 space-y-2.5">
+            <span className="text-[9px] uppercase tracking-wider font-bold text-brand-navy flex items-center gap-1.5 font-sans">
               <AlertCircle className="w-3.5 h-3.5" />
               Parent-Child Script Highlight: Talking about Deepfakes
             </span>
-            <div className="text-xs italic space-y-1.5 text-brand-navy/80 font-sans border-l-2 border-brand-teal pl-3">
+            <div className="text-xs italic space-y-1.5 text-brand-navy/80 font-sans border-l-2 border-brand-navy pl-3">
               <p>
                 <strong>You: </strong> "Have you seen those videos where someone's face changes into actor Shah Rukh Khan or a video-game character?"
               </p>
@@ -91,7 +91,7 @@ export default function ChaptersModal({ isOpen, onClose, chapters, bookTitle }: 
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-brand-navy text-center border-t border-brand-teal/10">
+        <div className="p-4 bg-brand-navy text-center border-t border-brand-slate/15">
           <p className="text-[11px] text-brand-cream/70 font-sans">
             Ready to read all 3 PDF guides? Instantly delivered on purchase of Rs. 299.
           </p>

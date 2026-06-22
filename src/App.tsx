@@ -73,8 +73,24 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-cream text-brand-navy antialiased selection:bg-brand-teal/20 selection:text-brand-navy font-sans">
+    <div className="min-h-screen bg-brand-cream text-brand-navy antialiased selection:bg-brand-gold/20 selection:text-brand-navy font-sans">
       
+      {/* HEADER: Navy */}
+      <header className="bg-brand-navy text-white px-5 py-4 border-b border-white/10 shadow-xs">
+        <div className="max-w-xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-brand-gold" />
+            <span className="font-display font-black text-xs tracking-widest text-white">THEPARENTINGAI</span>
+          </div>
+          <button 
+            onClick={handleScrollToPricing}
+            className="bg-brand-gold text-brand-navy hover:bg-[#C9A95F] font-sans font-extrabold text-[10px] px-3.5 py-1.5 rounded-md transition-all shadow-sm cursor-pointer border border-brand-gold/20"
+          >
+            ORDER BUNDLE
+          </button>
+        </div>
+      </header>
+
       {/* SECTION 1: HERO */}
       <section className="bg-brand-cream px-5 py-10 md:py-16 border-b border-brand-teal/10">
         <div className="max-w-xl mx-auto text-center space-y-6">
@@ -111,7 +127,7 @@ export default function App() {
             <button
               id="cta-hero-download"
               onClick={handleScrollToPricing}
-              className="w-full bg-brand-teal hover:bg-[#238c80] text-white font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all transform flex items-center justify-center gap-2 cursor-pointer border border-[#1e786d]"
+              className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all transform flex items-center justify-center gap-2 cursor-pointer border border-brand-gold/30"
             >
               <span>DOWNLOAD NOW FOR Rs. 299 →</span>
             </button>
@@ -124,10 +140,10 @@ export default function App() {
 
       {/* DELIVERY VAULT CONTROLLER (ONLY Visible instantly after purchase simulation to fulfill complete functionality) */}
       {hasCompletedPurchase && (
-        <section id="delivery-vault-dashboard" className="bg-[#EFFFFA] border-y-2 border-brand-teal px-5 py-8">
+        <section id="delivery-vault-dashboard" className="bg-white border-y-2 border-brand-gold px-5 py-8">
           <div className="max-w-lg mx-auto space-y-5">
             <div className="text-center space-y-2">
-              <span className="bg-brand-teal text-white font-mono text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <span className="bg-brand-gold text-brand-navy font-mono text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                 UNLOCKED ACCESS VAULT
               </span>
               <h3 className="font-display text-xl font-bold text-brand-navy">Your parenting resources are ready</h3>
@@ -138,10 +154,10 @@ export default function App() {
 
             <div className="space-y-2.5">
               {BOOKS.map((book) => (
-                <div key={book.id} className="bg-white rounded-xl p-3.5 border border-brand-teal/20 flex items-center justify-between shadow-xs">
+                <div key={book.id} className="bg-white rounded-xl p-3.5 border border-brand-gold/20 flex items-center justify-between shadow-xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-14 bg-gradient-to-br from-brand-teal to-brand-navy rounded-xs flex items-center justify-center text-white shrink-0 shadow-xxs">
-                      <Cpu className="w-5 h-5 text-brand-gold" />
+                    <div className="w-10 h-14 bg-gradient-to-br from-brand-gold to-brand-navy rounded-xs flex items-center justify-center text-white shrink-0 shadow-xxs">
+                      <Cpu className="w-5 h-5 text-brand-navy" />
                     </div>
                     <div>
                       <h4 className="text-xs font-bold text-brand-navy">{book.title}</h4>
@@ -152,9 +168,9 @@ export default function App() {
                     id={`active-direct-download-${book.id}`}
                     href={`data:text/plain;charset=utf-8,${encodeURIComponent(`Simulated Content for: ${book.title}. Detailed parenting chapters compiled for learning.`)}`}
                     download={`${book.title.replace(/\s+/g, '_')}_SecureAccess.pdf`}
-                    className="bg-brand-teal hover:bg-[#208276] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                    className="bg-brand-gold hover:bg-[#C9A95F] text-brand-navy px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
                   >
-                    <Download className="w-3.5 h-3.5" />
+                    <Download className="w-3.5 h-3.5 text-brand-navy" />
                     <span>PDF</span>
                   </a>
                 </div>
@@ -255,29 +271,29 @@ export default function App() {
               "Thinks critically and solves real-world domestic problems",
               "Has the habits of children raised in the world's most successful families"
             ].map((title, index) => (
-              <li key={index} className="flex gap-3 items-center bg-white p-4 rounded-xl border border-brand-teal/5 shadow-xs">
-                <div className="w-5 h-5 rounded-full bg-brand-teal/10 text-brand-teal flex items-center justify-center shrink-0">
-                  <CheckCircle className="w-4 h-4 text-brand-teal" />
+              <li key={index} className="flex gap-3 items-center bg-white p-4 rounded-xl border border-brand-slate/15 shadow-xs">
+                <div className="w-5 h-5 rounded-full bg-brand-navy/10 text-brand-navy flex items-center justify-center shrink-0">
+                  <CheckCircle className="w-4 h-4 text-brand-navy" />
                 </div>
                 <h4 className="font-sans text-sm font-bold text-brand-navy">{title}</h4>
               </li>
             ))}
           </ul>
 
-          <p className="text-sm italic font-display text-brand-teal font-semibold text-center pt-3">
+          <p className="text-sm italic font-display text-brand-slate font-semibold text-center pt-3">
             "This bundle gives you everything you need to make it happen."
           </p>
         </div>
       </section>
 
       {/* SECTION 4: WHAT YOU'RE GETTING (BUNDLE VIEW WITH CTA #2) */}
-      <section className="bg-white px-5 py-12 md:py-20 border-b border-brand-teal/10">
+      <section className="bg-brand-cream px-5 py-12 md:py-20 border-b border-brand-slate/15">
         <div className="max-w-xl mx-auto space-y-8">
           <div className="text-center space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-teal font-sans block">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-slate font-sans block">
               THE COMPLETE BUNDLE
             </span>
-            <h2 className="font-display text-2xl md:text-4xl font-bold text-brand-navy">
+            <h2 className="font-display text-2xl md:text-4xl font-bold text-brand-navy font-sans">
               Here’s everything inside
             </h2>
           </div>
@@ -286,7 +302,7 @@ export default function App() {
             {BOOKS.map((book) => (
               <div 
                 key={book.id}
-                className="bg-brand-cream/40 rounded-2xl p-5 border border-brand-light-teal/80 flex flex-col md:flex-row gap-5 items-center md:items-start transition-all hover:bg-brand-cream/80"
+                className="bg-white rounded-2xl p-5 border border-brand-slate/15 flex flex-col md:flex-row gap-5 items-center md:items-start transition-all hover:shadow-xs"
               >
                 {/* Book Frame left */}
                 <div className="shrink-0">
@@ -354,7 +370,7 @@ export default function App() {
             <button
               id="cta-bundle-access"
               onClick={handleScrollToPricing}
-              className="w-full bg-brand-teal hover:bg-[#238c80] text-white font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-[#1e786d]"
+              className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-brand-gold/30"
             >
               <span>GET INSTANT ACCESS →</span>
             </button>
@@ -366,7 +382,7 @@ export default function App() {
       </section>
 
       {/* SECTION 5: TRUST & CREDIBILITY */}
-      <section className="bg-brand-light-teal/50 px-5 py-12 border-b border-brand-teal/15">
+      <section className="bg-brand-cream px-5 py-12 border-b border-brand-slate/15">
         <div className="max-w-xl mx-auto space-y-8">
           
           {/* Trust badges row */}
@@ -376,9 +392,9 @@ export default function App() {
               { label: 'Written for Indian Families', detail: 'Cultural context, setup & board references' },
               { label: 'No Jargon, No Coding', detail: 'Perfect even for absolute non-tech parents' }
             ].map((badge, idx) => (
-              <div key={idx} className="bg-white/80 backdrop-blur-xs p-3.5 rounded-xl border border-brand-teal/10 text-center space-y-1.5 shadow-xxs">
-                <div className="w-7 h-7 mx-auto rounded-full bg-brand-teal/10 text-brand-teal flex items-center justify-center">
-                  <ShieldCheck className="w-4 h-4" />
+              <div key={idx} className="bg-white p-3.5 rounded-xl border border-brand-slate/15 text-center space-y-1.5 shadow-xs">
+                <div className="w-7 h-7 mx-auto rounded-full bg-brand-navy/10 text-brand-navy flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4 text-brand-navy" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-brand-navy font-sans leading-tight">{badge.label}</h4>
@@ -393,7 +409,7 @@ export default function App() {
             <div className="text-center">
               <div className="flex justify-center text-brand-gold h-5 mb-1.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
+                  <Star key={i} className="w-4 h-4 fill-current animate-pulse" />
                 ))}
               </div>
               <h3 className="font-display text-lg font-bold text-brand-navy">What Other Indian Parents Are Saying</h3>
@@ -401,16 +417,16 @@ export default function App() {
 
             <div className="space-y-4 font-sans">
               {TESTIMONIALS.map((test) => (
-                <div key={test.id} className="bg-white rounded-xl p-4.5 border border-brand-teal/10 shadow-xs space-y-3 relative">
-                  <span className="absolute top-4 right-4 text-brand-teal/10">
-                    <Quote className="w-10 h-10 transform scale-x-[-1]" />
+                <div key={test.id} className="bg-white rounded-xl p-4.5 border border-brand-slate/15 shadow-xs space-y-3 relative animate-fadeIn">
+                  <span className="absolute top-4 right-4 text-brand-slate/15">
+                    <Quote className="w-10 h-10 transform scale-x-[-1] text-brand-slate" />
                   </span>
                   
-                  <p className="text-xs text-brand-navy/80 italic leading-relaxed relative z-10 select-none">
+                  <p className="text-xs text-brand-navy/85 italic leading-relaxed relative z-10 select-none">
                     "{test.comment}"
                   </p>
 
-                  <div className="flex items-center justify-between pt-2.5 border-t border-brand-teal/5 text-[11px] text-brand-navy/60 font-sans relative z-10">
+                  <div className="flex items-center justify-between pt-2.5 border-t border-brand-slate/10 text-[11px] text-brand-slate font-sans relative z-10">
                     <div>
                       <strong className="text-brand-navy font-semibold">{test.name}</strong> 
                       <span className="mx-1">•</span> 
@@ -500,13 +516,13 @@ export default function App() {
                   <span className="line-through font-semibold">Rs. 1,097</span>
                 </div>
                 
-                <div className="flex justify-between items-center bg-[#18396c]/60 p-4 rounded-xl border border-brand-teal/20">
+                <div className="flex justify-between items-center bg-[#18396c]/60 p-4 rounded-xl border border-white/20">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-brand-teal block">TODAY'S SPECIAL DISPATCH</span>
+                    <span className="text-[10px] uppercase font-bold text-white block">TODAY'S SPECIAL DISPATCH</span>
                     <span className="text-lg font-bold text-white/90">Complete Bundle Price</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-black text-brand-teal decoration-brand-teal select-all">Rs. 299</span>
+                    <span className="text-2xl font-black text-white select-all">Rs. 299</span>
                     <p className="text-[9px] text-white/60 font-mono italic">one-time payment</p>
                   </div>
                 </div>
@@ -519,7 +535,7 @@ export default function App() {
             <button
               id="cta-pricing-down"
               onClick={handleOpenCheckout}
-              className="w-full bg-brand-teal hover:bg-[#238c80] text-white font-sans font-extrabold text-base py-4 py-4.5 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2 border border-[#1e786d]"
+              className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 py-4.5 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2 border border-brand-gold/30"
             >
               <span>YES, I WANT THE BUNDLE →</span>
             </button>
@@ -589,7 +605,7 @@ export default function App() {
           <button
             id="cta-bottom-closure"
             onClick={handleOpenCheckout}
-            className="inline-flex w-full bg-brand-teal hover:bg-[#238c80] text-white font-sans font-extrabold text-base py-4 px-6 rounded-lg transition-all shadow-md hover:shadow-lg cursor-pointer items-center justify-center gap-2 border border-[#1e786d]"
+            className="inline-flex w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg transition-all shadow-md hover:shadow-lg cursor-pointer items-center justify-center gap-2 border border-brand-gold/30"
           >
             <span>DOWNLOAD BUNDLE NOW FOR Rs. 299</span>
           </button>
