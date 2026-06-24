@@ -36,8 +36,20 @@ export default function App() {
   const [hasCompletedPurchase, setHasCompletedPurchase] = useState(false);
   const [buyerEmail, setBuyerEmail] = useState('');
   const [notification, setNotification] = useState<string | null>(
-    '✨ Pre-launch waitlist is active! Join free today to secure your priority spot.'
+    '✨ Exclusive digital access is live! Get yours today to secure your digital bundle.'
   );
+  
+  // Check on-mount for saved purchase completion
+  React.useEffect(() => {
+    // 1. Persistence Restore
+    const isUnlocked = localStorage.getItem('has_unlocked_parenting_bundle') === 'true';
+    const savedEmail = localStorage.getItem('unlocked_buyer_email');
+    if (isUnlocked && savedEmail) {
+      setHasCompletedPurchase(true);
+      setBuyerEmail(savedEmail);
+      setNotification('🎉 Welcome back! Your lifetime 3-Book Parenting AI Bundle is active below.');
+    }
+  }, []);
 
   const handleOpenCheckout = () => {
     setIsCheckoutOpen(true);
@@ -62,7 +74,7 @@ export default function App() {
   const handlePurchaseSuccess = (email: string) => {
     setBuyerEmail(email);
     setHasCompletedPurchase(true);
-    setNotification('🎉 Waitlist entry secured! We will notify you when the bundle launches.');
+    setNotification('🎉 Order secured! Your bundle guides are registered successfully.');
   };
 
   return (
@@ -79,7 +91,7 @@ export default function App() {
             onClick={handleScrollToPricing}
             className="bg-brand-gold text-brand-navy hover:bg-[#C9A95F] font-sans font-extrabold text-[10px] px-3.5 py-1.5 rounded-md transition-all shadow-sm cursor-pointer border border-brand-gold/20"
           >
-            JOIN WAITLIST
+            GET NOW
           </button>
         </div>
       </header>
@@ -122,10 +134,10 @@ export default function App() {
               onClick={handleOpenCheckout}
               className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all transform flex items-center justify-center gap-2 cursor-pointer border border-brand-gold/30"
             >
-              <span>JOIN FREE LAUNCH WAITLIST →</span>
+              <span>GET NOW →</span>
             </button>
             <p className="text-[11px] text-brand-navy/55 font-sans">
-              Secure Priority Group A placement for the upcoming launch.
+              Get immediate full access to the Parenting AI digital bundle.
             </p>
           </div>
         </div>
@@ -316,10 +328,10 @@ export default function App() {
               onClick={handleScrollToPricing}
               className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-brand-gold/30"
             >
-              <span>JOIN FREE LAUNCH WAITLIST →</span>
+              <span>GET NOW →</span>
             </button>
             <p className="text-center text-[11px] text-brand-navy/55 font-sans">
-              Secure Priority Group A placement for the upcoming launch in June 2026.
+              Get immediate full access to the parenting guides instantly.
             </p>
           </div>
         </div>
@@ -332,7 +344,7 @@ export default function App() {
           {/* Trust badges row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { label: 'Standard Priority Spot', detail: 'Reserved successfully for free' },
+              { label: 'Instant Access', detail: 'Delivered successfully for free' },
               { label: 'Written for Indian Families', detail: 'Cultural context, setup & board references' },
               { label: 'No Jargon, No Coding', detail: 'Perfect even for absolute non-tech parents' }
             ].map((badge, idx) => (
@@ -435,7 +447,7 @@ export default function App() {
                   <span className="font-bold">The Parenting AI (Primary Guide)</span>
                   <p className="text-[10px] text-white/60">Practical future readiness and safety framework</p>
                 </div>
-                <span className="line-through text-white/50">Rs. 499</span>
+                <span className="line-through text-white/50">Rs. 999</span>
               </div>
 
               <div className="flex justify-between text-xs text-white/90">
@@ -443,7 +455,7 @@ export default function App() {
                   <span className="font-bold text-brand-gold">Bonus #1: The AI-Safe Home</span>
                   <p className="text-[10px] text-brand-gold/80">Step-by-step parental controls & device setups</p>
                 </div>
-                <span className="line-through text-white/50">Rs. 299</span>
+                <span className="line-through text-white/50">Rs. 499</span>
               </div>
 
               <div className="flex justify-between text-xs text-white/90">
@@ -451,23 +463,23 @@ export default function App() {
                   <span className="font-bold text-brand-gold">Bonus #2: The 1% Parent</span>
                   <p className="text-[10px] text-brand-gold/80">21 strategic habits from global leader families</p>
                 </div>
-                <span className="line-through text-white/50">Rs. 299</span>
+                <span className="line-through text-white/50">Rs. 501</span>
               </div>
 
               <div className="pt-4 border-t border-white/10 space-y-3">
                 <div className="flex justify-between text-xs text-white/70">
                   <span>Total Standard Value:</span>
-                  <span className="line-through font-semibold">Rs. 1,097</span>
+                  <span className="line-through font-semibold">Rs. 1,999</span>
                 </div>
                 
                 <div className="flex justify-between items-center bg-[#18396c]/60 p-4 rounded-xl border border-white/20">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-white block">TODAY'S PRE-LAUNCH FOCUS</span>
-                    <span className="text-lg font-bold text-white/90">Waitlist Joining Fee</span>
+                    <span className="text-[10px] uppercase font-bold text-white block">TODAY'S SPECIAL OFFER</span>
+                    <span className="text-lg font-bold text-white/90">Digital Bundle Fee</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-black text-brand-gold select-all">FREE</span>
-                    <p className="text-[9px] text-white/60 font-mono italic">pre-launch benefit</p>
+                    <span className="text-2xl font-black text-brand-gold select-all">Rs. 299</span>
+                    <p className="text-[9px] text-white/60 font-mono italic">one-time payment</p>
                   </div>
                 </div>
               </div>
@@ -481,10 +493,10 @@ export default function App() {
               onClick={handleOpenCheckout}
               className="w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 py-4.5 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.01] cursor-pointer flex items-center justify-center gap-2 border border-brand-gold/30"
             >
-              <span>YES, SIGN ME UP FOR THE WAITLIST →</span>
+              <span>YES, GET NOW →</span>
             </button>
             <p className="text-center text-[11px] text-white/60 font-sans">
-              Join for Rs. 0. Secure Priority Group A. Alerts when the final bundle launches in June 2026.
+              Get standard bundle access for Rs. 299 now.
             </p>
           </div>
         </div>
@@ -551,7 +563,7 @@ export default function App() {
             onClick={handleOpenCheckout}
             className="inline-flex w-full bg-brand-gold hover:bg-[#C9A95F] text-brand-navy font-sans font-extrabold text-base py-4 px-6 rounded-lg transition-all shadow-md hover:shadow-lg cursor-pointer items-center justify-center gap-2 border border-brand-gold/30"
           >
-            <span>JOIN THE EXCLUSIVE WAITLIST FOR FREE</span>
+            <span>GET THE EXCLUSIVE BUNDLE FOR FREE NOW</span>
           </button>
 
           <div className="pt-6 space-y-2 border-t border-white/10 text-[11px] text-brand-cream/60 font-sans">
