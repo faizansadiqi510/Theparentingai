@@ -4,14 +4,10 @@ import {
   CheckCircle, 
   ShieldCheck, 
   ArrowRight, 
-  Check, 
   AlertCircle,
   Lock,
   CreditCard,
-  ExternalLink,
-  User,
-  Mail,
-  Phone
+  ExternalLink
 } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -90,81 +86,21 @@ function RazorpayButton({ buttonId }: RazorpayButtonProps) {
 }
 
 export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutModalProps) {
-  const [form, setForm] = useState({
-    email: '',
-    parentName: '',
-    phone: '',
-  });
-
-  const [errorMessage, setErrorMessage] = useState('');
   const [step, setStep] = useState<'checkout' | 'success'>('checkout');
   const [registrationId, setRegistrationId] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setErrorMessage('');
-  };
-
-  const syncLeadData = async (updatedForm: typeof form) => {
-    // Basic verification before writing to backend
-    if (!updatedForm.email.trim() || !updatedForm.email.includes('@')) return;
-
-    const entryId = registrationId || 'member_' + Math.floor(Math.random() * 900000 + 100000);
-    if (!registrationId) {
-      setRegistrationId(entryId);
+  useEffect(() => {
+    if (isOpen) {
+      setStep('checkout');
+      setRegistrationId('member_' + Math.floor(Math.random() * 900000 + 100000));
     }
-
-    try {
-      // 1. Persist registration in Firestore waitlist
-      const docRef = doc(db, 'waitlist', entryId);
-      const firestorePayload = {
-        parentName: updatedForm.parentName.trim() || 'Parent Member',
-        email: updatedForm.email.trim(),
-        phone: updatedForm.phone.trim() || 'Not Provided',
-        syncedToSheets: false,
-        createdAt: serverTimestamp(),
-        paymentStatus: 'PENDING_RAZORPAY'
-      };
-
-      try {
-        await setDoc(docRef, firestorePayload);
-      } catch (fErr) {
-        console.warn('Firestore write failed, using local browser fallback:', fErr);
-      }
-
-      // 2. Trigger Google sheets logging if VITE_DIRECT_SHEETS_URL is configured
-      const directSheetsUrl = (import.meta as any).env?.VITE_DIRECT_SHEETS_URL || 'https://script.google.com/macros/s/AKfycbwKb-Tc3EuoCTp6CRpplzeqvrrZ47sxdD-p1Y_d5HM-RMNdyfBxqW0zTW8xiN6P14hJPA/exec';
-      if (directSheetsUrl) {
-        fetch(directSheetsUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            parentName: updatedForm.parentName.trim() || 'Parent Member',
-            email: updatedForm.email.trim(),
-            phone: updatedForm.phone.trim() || 'Not Provided',
-            amountPaid: 'Rs. 299 (Lead Capture)',
-            orderId: entryId,
-            paymentStatus: 'AWAITING_PAYMENT',
-            createdAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-          })
-        }).catch(() => {});
-      }
-    } catch (err) {
-      console.error('Registration lead capture error:', err);
-    }
-  };
-
-  const handleInputBlur = () => {
-    syncLeadData(form);
-  };
+  }, [isOpen]);
 
   const handleManualUnlock = () => {
     // Persist purchase complete state in local browser to immediately unlock guides
-    const finalEmail = form.email.trim() || 'member@theparentingai.com';
-    const finalName = form.parentName.trim() || 'Parent Member';
-    const finalPhone = form.phone.trim() || '9876543210';
+    const finalEmail = 'member@theparentingai.com';
+    const finalName = 'Parent Member';
+    const finalPhone = '9876543210';
     const entryId = registrationId || 'member_' + Math.floor(Math.random() * 900000 + 100000);
 
     localStorage.setItem('has_unlocked_parenting_bundle', 'true');
@@ -252,78 +188,23 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               </div>
             </div>
 
-            {errorMessage && (
-              <div className="p-3 bg-brand-coral/10 border border-brand-coral/20 rounded-lg text-brand-coral text-xs font-semibold flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            {/* Inputs Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-1.5 border-b border-brand-slate/10 pb-1">
-                <User className="w-4 h-4 text-brand-navy/70" />
-                <h4 className="text-xs uppercase tracking-wider font-bold text-brand-navy/70 font-sans">
-                  1. Delivery Information
-                </h4>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-brand-navy mb-1 font-sans">Parent's Full Name</label>
-                <input
-                  type="text"
-                  name="parentName"
-                  value={form.parentName}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  placeholder="E.g., Dr. Meera Patil"
-                  className="w-full bg-white text-sm text-brand-navy border border-brand-slate/20 rounded-lg py-2 px-3 focus:outline-hidden focus:ring-2 focus:ring-brand-navy/15 focus:border-brand-navy font-sans shadow-xxs"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-brand-navy mb-1 font-sans">Email (For Digital Delivery)</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleInputChange}
-                    onBlur={handleInputBlur}
-                    placeholder="name@gmail.com"
-                    className="w-full bg-white text-sm text-brand-navy border border-brand-slate/20 rounded-lg py-2 px-3 focus:outline-hidden focus:ring-2 focus:ring-brand-navy/15 focus:border-brand-navy font-sans shadow-xxs"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-brand-navy mb-1 font-sans">WhatsApp / Mobile Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleInputChange}
-                    onBlur={handleInputBlur}
-                    placeholder="9876543210"
-                    maxLength={12}
-                    className="w-full bg-white text-sm text-brand-navy border border-brand-slate/20 rounded-lg py-2 px-3 focus:outline-hidden focus:ring-2 focus:ring-brand-navy/15 focus:border-brand-navy font-sans shadow-xxs"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Razorpay Gateway Section */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center gap-1.5 border-b border-brand-slate/10 pb-1">
                 <CreditCard className="w-4 h-4 text-[#3399cc]" />
                 <h4 className="text-xs uppercase tracking-wider font-bold text-brand-navy/70 font-sans">
-                  2. Secure Payment Gateway
+                  Secure Payment Gateway
                 </h4>
               </div>
 
               {/* Sandbox / Iframe notice */}
+              <div className="p-2.5 bg-brand-navy/5 border border-brand-navy/10 rounded-xl text-brand-navy text-[11px] font-sans flex items-start gap-2">
+                <ExternalLink className="w-3.5 h-3.5 text-brand-navy shrink-0 mt-0.5" />
+                <div>
+                  Our secure payment gateway will collect your name, email, and mobile number to deliver your Parenting AI books. Click the button below to start.
+                </div>
+              </div>
+
               <div className="p-2.5 bg-brand-navy/5 border border-brand-navy/10 rounded-xl text-brand-navy text-[11px] font-sans flex items-start gap-2">
                 <ExternalLink className="w-3.5 h-3.5 text-brand-navy shrink-0 mt-0.5" />
                 <div>
@@ -383,7 +264,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               </div>
               <h3 className="font-display text-lg font-bold text-brand-cream">Payment Confirmed!</h3>
               <p className="text-xs text-white/80 font-sans max-w-sm mx-auto">
-                Thank you, <strong className="text-brand-gold">{form.parentName || 'Parent Member'}</strong>! Your email <strong className="underline">{form.email || 'your-delivery-email'}</strong> has been registered for immediate bundle access.
+                Thank you! Your lifetime access to the 3-Book Parenting AI Bundle is now active.
               </p>
             </div>
 
@@ -398,11 +279,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
                 <div className="grid grid-cols-2 gap-y-2.5 text-xs font-sans">
                   <div>
                     <span className="text-brand-navy/50 block text-[10px] uppercase font-semibold">Registered Parent</span>
-                    <span className="text-brand-navy font-semibold">{form.parentName || 'Parent Member'}</span>
-                  </div>
-                  <div>
-                    <span className="text-brand-navy/50 block text-[10px] uppercase font-semibold">Delivery Email</span>
-                    <span className="text-brand-navy font-semibold truncate max-w-[140px] block">{form.email || 'customer@parentingai.com'}</span>
+                    <span className="text-brand-navy font-semibold">Parent Member</span>
                   </div>
                   <div>
                     <span className="text-brand-navy/50 block text-[10px] uppercase font-semibold">Bundle Status</span>
