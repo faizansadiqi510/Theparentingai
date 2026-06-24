@@ -228,20 +228,7 @@ export default function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutMo
               </div>
             </div>
 
-            {/* Fallback Option in case of iframe blockers or instant test checkouts */}
-            <div className="bg-brand-cream/60 border border-brand-slate/15 rounded-xl p-3.5 text-center space-y-1.5">
-              <p className="text-[11px] text-brand-navy/70 font-sans">
-                Testing the checkout, already paid, or having iframe sandbox issues?
-              </p>
-              <button
-                type="button"
-                onClick={handleManualUnlock}
-                className="inline-flex items-center gap-1 text-xs font-bold text-brand-navy hover:underline transition-all cursor-pointer"
-              >
-                <span>Instantly Bypass & Verify Activation</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+
           </div>
         )}
 

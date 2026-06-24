@@ -8,12 +8,32 @@
       // Gracefully suppress generic cross-origin "Script error." which can occur 
       // when loading third-party scripts (like Razorpay) inside sandboxed iframes.
       window.onerror = function (message, url, line, col, error) {
-        if (message === "Script error." || !url || message.indexOf("Script error") !== -1) {
-          console.warn("Suppressed cross-origin third-party script error:", message);
+        if (message === "Script error." || !url || (typeof message === 'string' && message.indexOf("Script error") !== -1)) {
+          console.warn("Suppressed cross-origin third-party script error via onerror:", message);
           return true; // Prevents the error from propagating to the browser's console or test harness
         }
         return false; // Let other actual application errors propagate normally
       };
+
+      // Add a capturing-phase event listener to catch and stop error propagation early
+      window.addEventListener('error', function (event) {
+        var message = event.message || '';
+        if (message === "Script error." || (typeof message === 'string' && message.indexOf("Script error") !== -1)) {
+          console.warn("Suppressed cross-origin third-party script error via listener:", message);
+          event.stopImmediatePropagation();
+          event.preventDefault();
+        }
+      }, true);
+
+      // Handle unhandled promise rejections as well
+      window.addEventListener('unhandledrejection', function (event) {
+        var reason = event.reason;
+        if (reason && (reason.message === "Script error." || (typeof reason.message === 'string' && reason.message.indexOf("Script error") !== -1))) {
+          console.warn("Suppressed cross-origin third-party promise rejection error:", reason.message);
+          event.stopImmediatePropagation();
+          event.preventDefault();
+        }
+      }, true);
     </script>
   </head>
   <body>
